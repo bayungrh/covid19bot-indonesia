@@ -1,0 +1,19 @@
+{
+  "name": "covid19-update",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "MuhBayu",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "node-cron": "^2.0.3",
+    "puppeteer": "^2.1.1",
+    "redis": "^3.0.2",
+    "twit": "^2.2.11"
+  }
+}
