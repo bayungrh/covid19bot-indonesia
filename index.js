@@ -70,8 +70,17 @@ const start = async() => {
             }
         }
     })
+    corona.regions_affected.every(async t => {
+        if(t.country.toLowerCase().includes('indonesia')) {
+            let json_str = JSON.stringify(t)
+            var checkExist = await redisGet('indonesia_affected')
+            if(!checkExist || checkExist !== json_str) {
+                await tweet(`COVID-19 Update for ${t.country}\n\nInfections: ${t.infection}\nActive cases: ${t.active_cases}\nDeaths: ${t.deaths}\nRecovered: ${t.recovered}\n\nUpdated ${new Date().toLocaleString()}`)
+                redis_client.set('indonesia_affected', json_str)
+            }
+        }
+    })
 }
-
 cron.schedule("* * * * *", () => {
     console.log("START")
     start()
