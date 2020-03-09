@@ -6,8 +6,9 @@ const covid19_update = async () => {
     });
     const page = await browser.newPage();
     await page.setCacheEnabled(true)
-    await page.goto(`https://thewuhanvirus.com/`)
-    .catch(e => {})
+    await page.goto(`https://thewuhanvirus.com/`, {
+        waitUntil: ['load', 'domcontentloaded', 'networkidle0', 'networkidle2']
+    })
 
     const news = await page.evaluate(async() => {
         var contents = []
