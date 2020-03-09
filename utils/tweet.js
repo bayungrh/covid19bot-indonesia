@@ -1,6 +1,6 @@
 var Twit = require('twit')
 
-var T = new Twit({
+const T = new Twit({
     consumer_key:         process.env.TWITTER_CONSUMER_KEY,
     consumer_secret:      process.env.TWITTER_CONSUMER_SECRET,
     access_token:         process.env.TWITTER_ACCESS_TOKEN,
@@ -19,4 +19,9 @@ const tweet = (text, reply_status_id=null) => {
             }
         })
     })
+}
+
+module.exports = {
+    T,
+    tweet
 }
