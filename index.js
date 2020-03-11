@@ -1,4 +1,5 @@
 require('dotenv').config()
+process.env.TZ = 'Asia/Jakarta'
 const {
     redis_client,
     redisGet
