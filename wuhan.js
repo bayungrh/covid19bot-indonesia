@@ -38,7 +38,6 @@ const covid19_update = async () => {
         return tbs
     })
     await browser.close()
-
     return {
         news: news,
         regions_affected: table_affected
