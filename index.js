@@ -43,7 +43,7 @@ const start = async() => {
                         var child_tweet = await tweet(text, latest_id).then(child_tweet)
                         latest_id = child_tweet.id_str
                     }
-                } else {
+                } else if (content.length > 0) {
                     await tweet(content, start_tweet.id_str).then()
                 }
                 redis_client.setex('news:'+hash_code, 60*24*30, c.title)
