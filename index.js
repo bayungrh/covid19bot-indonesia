@@ -46,7 +46,7 @@ const start = async() => {
                 } else if (content.length > 0) {
                     await tweet(content, start_tweet.id_str).then()
                 }
-                redis_client.setex('news:'+hash_code, 60*24*30, c.title)
+                redis_client.setex('news:'+hash_code, 86400*7, c.title)
             }
         }
     })
