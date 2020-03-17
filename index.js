@@ -61,7 +61,7 @@ const start = async() => {
         }
     })
 }
-cron.schedule("* * * * *", () => {
+cron.schedule("*/10 * * * *", () => {
     console.log("START")
     start()
 })
