@@ -9,7 +9,9 @@ const crc32 = require('./utils/hash')
 const cron = require('node-cron')
 const covid19_update_thewuhanvirus = require('./wuhan')
 const covid19_update_worldometers = require('./worldometers')
-const { tweet } = require('./utils/tweet')
+const { tweet, tweet_with_image } = require('./utils/tweet')
+const nodeHtmlToImage = require('node-html-to-image')
+const fs = require('fs')
 
 function chunkText(text) {
     var array = text.split(' ')
@@ -80,7 +82,15 @@ const thewuhanvirus_start = async() => {
 Bersumber dari thebaselab
 #COVID19 #COVID19Indonesia #coronavirus
 `
-                await tweet(text)
+                nodeHtmlToImage({
+                    output: './image.png',
+                    html: fs.readFileSync('./utils/template.html').toString(),
+                    content: {...{source: 'thebaselab', date: new Date().toLocaleDateString()}, ...t}
+                }).then(() => {
+                    tweet_with_image(text, fs.readFileSync('./image.png'))
+                }).catch(() => {
+                    tweet(text)
+                })
                 redis_client.set('indonesia_affected', json_str)
             }
         }
@@ -109,12 +119,20 @@ const worldometers_start = async() => {
 Bersumber dari worldometers
 #COVID19 #COVID19Indonesia #coronavirus
 `
-        await tweet(text)
+        nodeHtmlToImage({
+            output: './image_2.png',
+            html: fs.readFileSync('./utils/template.html').toString(),
+            content: {...{source: 'worldometers'}, ...update}
+        }).then(() => {
+            tweet_with_image(text, fs.readFileSync('./image.png'))
+        }).catch(() => {
+            tweet(text)
+        })
         redis_client.set('indonesia_affected:worldometers', json_str)
     }
 }
 
-cron.schedule("*/10 * * * *", () => {
+cron.schedule("*/8 * * * *", () => {
     console.log("START for thebaselab")
     thewuhanvirus_start()
 }, { timezone: "Asia/Jakarta" })
