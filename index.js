@@ -58,16 +58,25 @@ const start = async() => {
     corona.regions_affected.every(async t => {
         if(t.country.toLowerCase().includes('indonesia')) {
             let json_str = JSON.stringify(t)
-            var checkExist = await redisGet('indonesia_affected')
-            if(!checkExist || checkExist !== json_str) {
-                let text = `COVID-19 di ${t.country} saat ini
+            let checkExist = await redisGet('indonesia_affected')
+            var exist_parse, diff_total = 0, diff_death = 0, diff_recovered = 0;
+            if(checkExist !== json_str) {
+                if(checkExist) {
+                    exist_parse = JSON.parse(checkExist)
+                    diff_total = parseInt(t.infection) - parseInt(exist_parse.infection)
+                    diff_death = parseInt(t.deaths) - parseInt(exist_parse.deaths)
+                    diff_recovered = parseInt(t.recovered) - parseInt(exist_parse.recovered)
+                }
+                let text = `COVID-19 di ${t.country} saat ini.
 
-Total kasus: ${t.infection}
-Kasus aktif: ${t.active_cases}
-Sembuh: ${t.recovered}
-Meninggal: ${t.deaths}
-Tingkat kematian: ${t.mortality_rate}
-Tingkat kesembuhan: ${t.recovery_rate}
+- Total: ${t.infection} ${diff_total > 0 ? `(+${diff_total})` : ''}
+- Perawatan: ${t.active_cases}
+- Sembuh: ${t.recovered} ${diff_recovered > 0 ? `(+${diff_recovered})` : ''}
+- Meninggal: ${t.deaths} ${diff_death > 0 ? `(+${diff_death})` : ''}
+- Tingkat kematian: ${t.mortality_rate}
+- Tingkat kesembuhan: ${t.recovery_rate}
+
+#COVID19 #COVID19Indonesia #coronavirus
 `
                 await tweet(text)
                 redis_client.set('indonesia_affected', json_str)
