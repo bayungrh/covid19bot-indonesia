@@ -7,7 +7,8 @@ const {
 
 const crc32 = require('./utils/hash')
 const cron = require('node-cron')
-const covid19_update = require('./wuhan')
+const covid19_update_thewuhanvirus = require('./wuhan')
+const covid19_update_worldmeters = require('./worldometers')
 const { tweet } = require('./utils/tweet')
 
 function chunkText(text) {
@@ -19,8 +20,8 @@ function chunkText(text) {
     return temparray
 }
 
-const start = async() => {
-    var corona = await covid19_update()
+const thewuhanvirus_start = async() => {
+    var corona = await covid19_update_thewuhanvirus()
     corona.news.every(async c => {
         var content = c.content
         if(c.title.toLowerCase().includes('indonesia')) {
@@ -76,6 +77,7 @@ const start = async() => {
 - Tingkat kematian: ${t.mortality_rate}
 - Tingkat kesembuhan: ${t.recovery_rate}
 
+Bersumber dari thebaselab
 #COVID19 #COVID19Indonesia #coronavirus
 `
                 await tweet(text)
@@ -84,9 +86,42 @@ const start = async() => {
         }
     })
 }
+
+const worldometers_start = async() => {
+    const update = await covid19_update_worldmeters('indonesia')
+    let json_str = JSON.stringify(update)
+    let checkExist = await redisGet('indonesia_affected:worldometers')
+    var exist_parse, diff_total = 0, diff_death = 0, diff_recovered = 0;
+    if(checkExist !== json_str) {
+        if(checkExist) {
+            exist_parse = JSON.parse(checkExist)
+            diff_total = parseInt(update.infection) - parseInt(exist_parse.infection)
+            diff_death = parseInt(update.deaths) - parseInt(exist_parse.deaths)
+            diff_recovered = parseInt(update.recovered) - parseInt(exist_parse.recovered)
+        }
+        let text = `COVID-19 di ${update.country} saat ini.
+
+- Total: ${update.infection} ${diff_total > 0 ? `(+${diff_total})` : ''}
+- Perawatan: ${update.active_cases}
+- Sembuh: ${update.recovered} ${diff_recovered > 0 ? `(+${diff_recovered})` : ''}
+- Meninggal: ${update.deaths} ${diff_death > 0 ? `(+${diff_death})` : ''}
+
+Bersumber dari worldometers
+#COVID19 #COVID19Indonesia #coronavirus
+`
+        await tweet(text)
+        redis_client.set('indonesia_affected:worldometers', json_str)
+    }
+}
+
 cron.schedule("*/10 * * * *", () => {
-    console.log("START")
-    start()
-})
+    console.log("START for thebaselab")
+    thewuhanvirus_start()
+}, { timezone: "Asia/Jakarta" })
+
+cron.schedule("*/5 * * * *", () => {
+    console.log("START for worldometers")
+    worldometers_start()
+}, { timezone: "Asia/Jakarta" })
 
 console.log("Service is running, press CTRL+C to stop.")
