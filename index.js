@@ -140,7 +140,7 @@ cron.schedule("*/10 * * * *", async () => {
     fs.unlinkSync('thebaselab_isrunning.run')
 }, { timezone: "Asia/Jakarta" })
 
-cron.schedule("*/7 * * * *", () => {
+cron.schedule("*/7 * * * *", async () => {
     if(fs.existsSync('thebaselab_isrunning.run')) return
     console.log("START for worldometers")
     fs.writeFileSync('worldometers_isrunning.run', '1')
