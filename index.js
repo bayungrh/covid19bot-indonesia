@@ -124,7 +124,7 @@ Bersumber dari worldometers
             html: fs.readFileSync('./utils/template.html').toString(),
             content: {...{source: 'worldometers'}, ...update}
         }).then(() => {
-            tweet_with_image(text, fs.readFileSync('./image.png'))
+            tweet_with_image(text, fs.readFileSync('./image_2.png'))
         }).catch(() => {
             tweet(text)
         })
