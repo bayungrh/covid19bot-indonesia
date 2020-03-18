@@ -15,22 +15,22 @@ const covid19_update = async () => {
         var affecteds = []
         const card_news = document.querySelectorAll("div.update_cards > div.cards_container > div.jumbotron-fluid")
         var table_affected = document.querySelectorAll('#country_data > table > tbody > tr')
-        card_news.forEach(async (product, i) => {
+        card_news.forEach(card => {
             news.push({
-                title: product.querySelector('h6').textContent,
-                content: product.querySelector('h5').textContent,
-                updated_at: product.querySelector('div.d-flex.justify-content-between.align-items-end div.text-right h5').textContent,
+                title: card.querySelector('h6').textContent,
+                content: card.querySelector('h5').textContent,
+                updated_at: card.querySelector('div.d-flex.justify-content-between.align-items-end div.text-right h5').textContent,
             })
         })
-        table_affected.forEach(t => {
+        table_affected.forEach(td => {
             affecteds.push({
-                country: t.querySelector('th').textContent,
-                infection: t.querySelector('td:nth-child(2) > h4').textContent,
-                active_cases: t.querySelector('td:nth-child(3) > h4').textContent,
-                deaths: t.querySelector('td:nth-child(4) > h4').textContent,
-                recovered: t.querySelector('td:nth-child(5) > h4').textContent,
-                mortality_rate: t.querySelector('td:nth-child(6) > h4').textContent,
-                recovery_rate: t.querySelector('td:nth-child(7) > h4').textContent,
+                country: td.querySelector('th').textContent,
+                infection: td.querySelector('td:nth-child(2) > h4').textContent,
+                active_cases: td.querySelector('td:nth-child(3) > h4').textContent,
+                deaths: td.querySelector('td:nth-child(4) > h4').textContent,
+                recovered: td.querySelector('td:nth-child(5) > h4').textContent,
+                mortality_rate: td.querySelector('td:nth-child(6) > h4').textContent,
+                recovery_rate: td.querySelector('td:nth-child(7) > h4').textContent,
             })
         })
         return {
