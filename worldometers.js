@@ -33,9 +33,4 @@ const covid19_update = async (country_name) => {
     return data
 };
 
-(async() => {
-    var update = await covid19_update('indonesia')
-    console.log(update)
-})()
-
-// module.exports = covid19_update
+module.exports = covid19_update
