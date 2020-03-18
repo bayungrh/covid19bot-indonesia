@@ -42,11 +42,12 @@ const start = async() => {
                         var child_tweet = await tweet(text, latest_id)
                         latest_id = child_tweet.id_str
                         if(i === chunk.length - 1) {
-                            tweet(`Updated: ${c.updated_at}`, child_tweet.id_str)
+                            tweet(`Updated: ${c.updated_at}`, latest_id)
                         }
                     }
                 } else if (content.length > 0) {
-                    tweet(content, start_tweet.id_str)
+                    var child_tweet = await tweet(content, start_tweet.id_str)
+                    tweet(`Updated: ${c.updated_at}`, child_tweet.id_str)
                 }
                 redis_client.setex('news:'+hash_code, 86400*7, c.title)
             }
