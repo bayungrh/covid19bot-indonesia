@@ -29,8 +29,7 @@ const start = async() => {
                 console.log(hash_code+" EXIST")
                 return false
             } else {
-                // console.log(hash_code)
-                var start_tweet = await tweet(c.title).then(start_tweet)
+                var start_tweet = await tweet(c.title)
                 var latest_id = start_tweet.id_str
                 if(content.length > 278) {
                     var chunk = chunkText(content)
@@ -40,11 +39,14 @@ const start = async() => {
                         if(i != chunk.length - 1) {
                             text += ` ~(${i+1}/${chunk.length})`
                         }
-                        var child_tweet = await tweet(text, latest_id).then(child_tweet)
+                        var child_tweet = await tweet(text, latest_id)
                         latest_id = child_tweet.id_str
+                        if(i === chunk.length - 1) {
+                            tweet(`Updated: ${c.updated_at}`, child_tweet.id_str)
+                        }
                     }
                 } else if (content.length > 0) {
-                    await tweet(content, start_tweet.id_str).then()
+                    tweet(content, start_tweet.id_str)
                 }
                 redis_client.setex('news:'+hash_code, 86400*7, c.title)
             }
@@ -55,7 +57,15 @@ const start = async() => {
             let json_str = JSON.stringify(t)
             var checkExist = await redisGet('indonesia_affected')
             if(!checkExist || checkExist !== json_str) {
-                await tweet(`COVID-19 Update for ${t.country}\n\nInfections: ${t.infection}\nActive cases: ${t.active_cases}\nDeaths: ${t.deaths}\nRecovered: ${t.recovered}\n\nUpdated ${new Date().toLocaleString()}`)
+                let text = `Pembaruan COVID-19 di ${t.country} saat ini
+Terkonfirmasi: ${t.infection}
+Kasus aktif: ${t.active_cases}
+Disembuhkan: ${t.recovered}
+Meninggal: ${t.deaths}
+Tingkat Kematian: ${t.mortality_rate}
+Tingkat Kesembuhan: ${t.recovery_rate}
+`
+                await tweet(text)
                 redis_client.set('indonesia_affected', json_str)
             }
         }
