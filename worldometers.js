@@ -29,7 +29,7 @@ const covid19_update = async (country_name) => {
         })
         return affecteds
     }, country_name)
-    await browser.close()
+    await page.close().then(() => browser.close())
     return data
 };
 

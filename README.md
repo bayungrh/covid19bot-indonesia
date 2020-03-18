@@ -24,6 +24,7 @@ node index.js
 ## LICENSE
 MIT
 
-Source data from: 
+
+Data source from: 
 - [https://thewuhanvirus.com/](https://thewuhanvirus.com/)
 - [https://www.worldometers.info/coronavirus/](https://www.worldometers.info/coronavirus/)

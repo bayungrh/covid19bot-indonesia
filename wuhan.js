@@ -38,7 +38,7 @@ const covid19_update = async () => {
             regions_affected: affecteds
         }
     })
-    await browser.close()
+    await page.close().then(() => browser.close())
     return data
 };
 
