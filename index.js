@@ -8,8 +8,10 @@ const {
 const crc32 = require('./utils/hash')
 const cron = require('node-cron')
 const covid19_update_thewuhanvirus = require('./wuhan')
-const covid19_update_worldmeters = require('./worldometers')
-const { tweet } = require('./utils/tweet')
+const covid19_update_worldometers = require('./worldometers')
+const { tweet, tweet_with_image } = require('./utils/tweet')
+const nodeHtmlToImage = require('node-html-to-image')
+const fs = require('fs')
 
 function chunkText(text) {
     var array = text.split(' ')
@@ -80,7 +82,15 @@ const thewuhanvirus_start = async() => {
 Bersumber dari thebaselab
 #COVID19 #COVID19Indonesia #coronavirus
 `
-                await tweet(text)
+                nodeHtmlToImage({
+                    output: './image.png',
+                    html: fs.readFileSync('./utils/template.html').toString(),
+                    content: {...{source: 'thebaselab', date: new Date().toLocaleDateString()}, ...t}
+                }).then(() => {
+                    tweet_with_image(text, fs.readFileSync('./image.png'))
+                }).catch(() => {
+                    tweet(text)
+                })
                 redis_client.set('indonesia_affected', json_str)
             }
         }
@@ -88,7 +98,7 @@ Bersumber dari thebaselab
 }
 
 const worldometers_start = async() => {
-    const update = await covid19_update_worldmeters('indonesia')
+    const update = await covid19_update_worldometers('indonesia')
     let json_str = JSON.stringify(update)
     let checkExist = await redisGet('indonesia_affected:worldometers')
     var exist_parse, diff_total = 0, diff_death = 0, diff_recovered = 0;
@@ -109,19 +119,33 @@ const worldometers_start = async() => {
 Bersumber dari worldometers
 #COVID19 #COVID19Indonesia #coronavirus
 `
-        await tweet(text)
+        nodeHtmlToImage({
+            output: './image_2.png',
+            html: fs.readFileSync('./utils/template.html').toString(),
+            content: {...{source: 'worldometers'}, ...update}
+        }).then(() => {
+            tweet_with_image(text, fs.readFileSync('./image.png'))
+        }).catch(() => {
+            tweet(text)
+        })
         redis_client.set('indonesia_affected:worldometers', json_str)
     }
 }
 
-cron.schedule("*/10 * * * *", () => {
+cron.schedule("*/14 * * * *", async () => {
+    if(fs.existsSync('worldometers_isrunning.run')) return
     console.log("START for thebaselab")
-    thewuhanvirus_start()
+    fs.writeFileSync('thebaselab_isrunning.run', '1')
+    await thewuhanvirus_start()
+    fs.unlinkSync('thebaselab_isrunning.run')
 }, { timezone: "Asia/Jakarta" })
 
-cron.schedule("*/5 * * * *", () => {
+cron.schedule("*/7 * * * *", () => {
+    if(fs.existsSync('thebaselab_isrunning.run')) return
     console.log("START for worldometers")
-    worldometers_start()
+    fs.writeFileSync('worldometers_isrunning.run', '1')
+    await worldometers_start()
+    fs.unlinkSync('worldometers_isrunning.run')
 }, { timezone: "Asia/Jakarta" })
 
 console.log("Service is running, press CTRL+C to stop.")

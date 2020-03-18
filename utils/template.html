@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charSet="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono:500&display=swap" rel="stylesheet">
+    <title>Hello, world!</title>
+    <style>
+        body {
+            background: #22272c;
+            width: 1280px;
+            height: 440px;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .card {
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: 27px;
+            padding-right: 27px;
+            padding-top: 29px;
+            /* padding-bottom: 20px; */
+            background-color: #282d33;
+            border-radius: 6px;
+        }
+        
+        .css-tt00ea {
+            font-size: 50px;
+            line-height: 40px;
+            display: block;
+        }
+        
+        .text-yellow {
+            color: #f2c94c;
+            !important
+        }
+        
+        .text-warning {
+            color: #f5a623;
+            !important
+        }
+        
+        .text-success {
+            color: #219653;
+            !important
+        }
+        
+        .text-danger {
+            color: #d8232a;
+            !important
+        }
+        
+        .css-16iau3h {
+            line-height: 45px;
+            display: block;
+            margin-top: 4px;
+            color: #e1e2e6;
+        }
+        
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        img {
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .my-auto {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>&nbsp;</h1>
+    <div class="container mt-5">
+        <h2 class="" style="color: #ffff;">Jumlah Kasus di Indonesia Saat Ini <small style="font-size: 11pt;">{{date}}</small></h2>
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-md-3 my-auto">
+                <div class="card">
+                    <div class="container">
+                        <span class="css-tt00ea text-yellow">{{total}}</span>
+                        <p class="css-16iau3h">Total</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="container">
+                        <span class="css-tt00ea text-warning">{{active_cases}}</span>
+                        <p class="css-16iau3h">Perawatan</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="container">
+                        <span class="css-tt00ea text-success">{{recovered}}</span>
+                        <p class="css-16iau3h">Sembuh</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="container">
+                        <span class="css-tt00ea text-danger">{{deaths}}</span>
+                        <p class="css-16iau3h">Meninggal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4"><small class="text-light text-muted">{{date}} Data from {{source}}</small></div>
+    </div>
+</body>
+
+</html>
