@@ -88,7 +88,8 @@ Bersumber dari thebaselab
                     content: {...{source: 'thebaselab', date: new Date().toLocaleDateString()}, ...t}
                 }).then(() => {
                     tweet_with_image(text, fs.readFileSync('./image.png'))
-                }).catch(() => {
+                }).catch(err => {
+                    console.error(err)
                     tweet(text)
                 })
                 redis_client.set('indonesia_affected', json_str)
@@ -126,7 +127,8 @@ Bersumber dari worldometers
             content: {...{source: 'worldometers', date: new Date().toLocaleDateString()}, ...update}
         }).then(() => {
             tweet_with_image(text, fs.readFileSync('./image_2.png'))
-        }).catch(() => {
+        }).catch(err => {
+            console.error(err)
             tweet(text)
         })
         redis_client.set('indonesia_affected:worldometers', json_str)
