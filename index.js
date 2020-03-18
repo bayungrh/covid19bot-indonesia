@@ -57,7 +57,8 @@ const start = async() => {
             let json_str = JSON.stringify(t)
             var checkExist = await redisGet('indonesia_affected')
             if(!checkExist || checkExist !== json_str) {
-                let text = `Pembaruan COVID-19 di ${t.country} saat ini
+                let text = `COVID-19 di ${t.country} saat ini
+
 Terkonfirmasi: ${t.infection}
 Kasus aktif: ${t.active_cases}
 Disembuhkan: ${t.recovered}
