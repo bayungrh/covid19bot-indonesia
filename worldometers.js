@@ -6,13 +6,13 @@ const covid19_update = async (country_name) => {
     });
     const page = await browser.newPage();
     await page.setCacheEnabled(true)
-    await page.goto(`https://www.worldometers.info/coronavirus/`, {
+    await page.goto(`https://worldometers.info/coronavirus`, {
         waitUntil: ['load', 'domcontentloaded', 'networkidle0', 'networkidle2']
     })
 
     const data = await page.evaluate(async(country_name) => {
-        let affecteds = []
-        let table_affected = document.querySelectorAll('#main_table_countries > tbody:nth-child(2) tr')
+        let affecteds = {}
+        let table_affected = document.querySelectorAll('table#main_table_countries_today > tbody:nth-child(2) > tr')
         table_affected.forEach(td => {
             let country = td.querySelector('td:nth-child(1)').textContent
             if(country.toLowerCase().includes(country_name)) {
