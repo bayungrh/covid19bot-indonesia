@@ -48,6 +48,8 @@ const start = async() => {
                 } else if (content.length > 0) {
                     var child_tweet = await tweet(content, start_tweet.id_str)
                     tweet(`Updated: ${c.updated_at}`, child_tweet.id_str)
+                } else {
+                    tweet(`Updated: ${c.updated_at}`, start_tweet.id_str)
                 }
                 redis_client.setex('news:'+hash_code, 86400*7, c.title)
             }
@@ -60,12 +62,12 @@ const start = async() => {
             if(!checkExist || checkExist !== json_str) {
                 let text = `COVID-19 di ${t.country} saat ini
 
-Terkonfirmasi: ${t.infection}
+Total kasus: ${t.infection}
 Kasus aktif: ${t.active_cases}
-Disembuhkan: ${t.recovered}
+Sembuh: ${t.recovered}
 Meninggal: ${t.deaths}
-Tingkat Kematian: ${t.mortality_rate}
-Tingkat Kesembuhan: ${t.recovery_rate}
+Tingkat kematian: ${t.mortality_rate}
+Tingkat kesembuhan: ${t.recovery_rate}
 `
                 await tweet(text)
                 redis_client.set('indonesia_affected', json_str)
