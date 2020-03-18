@@ -1,5 +1,5 @@
 # covid19bot-indonesia
-[Twitter](https://twitter.com/covid19indo)
+[Twitter](https://twitter.com/covid19botindo)
 
 A simple BOT App to get the latest information about the corona virus that is spreading in Indonesia.
 
