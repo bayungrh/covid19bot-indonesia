@@ -99,6 +99,7 @@ Bersumber dari thebaselab
 
 const worldometers_start = async() => {
     const update = await covid19_update_worldometers('indonesia')
+    if(update.length < 1) return
     let json_str = JSON.stringify(update)
     let checkExist = await redisGet('indonesia_affected:worldometers')
     var exist_parse, diff_total = 0, diff_death = 0, diff_recovered = 0;
