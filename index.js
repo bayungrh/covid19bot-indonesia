@@ -8,7 +8,7 @@ const {
 const crc32 = require('./utils/hash')
 const cron = require('node-cron')
 const covid19_update_thewuhanvirus = require('./wuhan')
-const covid19_update_worldmeters = require('./worldometers')
+const covid19_update_worldometers = require('./worldometers')
 const { tweet } = require('./utils/tweet')
 
 function chunkText(text) {
@@ -88,7 +88,7 @@ Bersumber dari thebaselab
 }
 
 const worldometers_start = async() => {
-    const update = await covid19_update_worldmeters('indonesia')
+    const update = await covid19_update_worldometers('indonesia')
     let json_str = JSON.stringify(update)
     let checkExist = await redisGet('indonesia_affected:worldometers')
     var exist_parse, diff_total = 0, diff_death = 0, diff_recovered = 0;
