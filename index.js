@@ -132,14 +132,20 @@ Bersumber dari worldometers
     }
 }
 
-cron.schedule("*/8 * * * *", () => {
+cron.schedule("*/14 * * * *", async () => {
+    if(fs.existsSync('worldometers_isrunning.run')) return
     console.log("START for thebaselab")
-    thewuhanvirus_start()
+    fs.writeFileSync('thebaselab_isrunning.run', '1')
+    await thewuhanvirus_start()
+    fs.unlinkSync('thebaselab_isrunning.run')
 }, { timezone: "Asia/Jakarta" })
 
-cron.schedule("*/5 * * * *", () => {
+cron.schedule("*/7 * * * *", () => {
+    if(fs.existsSync('thebaselab_isrunning.run')) return
     console.log("START for worldometers")
-    worldometers_start()
+    fs.writeFileSync('worldometers_isrunning.run', '1')
+    await worldometers_start()
+    fs.unlinkSync('worldometers_isrunning.run')
 }, { timezone: "Asia/Jakarta" })
 
 console.log("Service is running, press CTRL+C to stop.")
