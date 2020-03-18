@@ -122,7 +122,7 @@ Bersumber dari worldometers
         nodeHtmlToImage({
             output: './image_2.png',
             html: fs.readFileSync('./utils/template.html').toString(),
-            content: {...{source: 'worldometers'}, ...update}
+            content: {...{source: 'worldometers', date: new Date().toLocaleDateString()}, ...update}
         }).then(() => {
             tweet_with_image(text, fs.readFileSync('./image_2.png'))
         }).catch(() => {
@@ -132,20 +132,32 @@ Bersumber dari worldometers
     }
 }
 
-cron.schedule("*/10 * * * *", async () => {
-    if(fs.existsSync('worldometers_isrunning.run')) return
+cron.schedule("*/10 * * * *", () => {
     console.log("START for thebaselab")
-    fs.writeFileSync('thebaselab_isrunning.run', '1')
-    await thewuhanvirus_start()
-    fs.unlinkSync('thebaselab_isrunning.run')
+    redis_client.exists("worldometers_isrunning", async (err, reply) => {
+        if(reply === 1) {
+            console.log("Waitting worldometers script")
+            return false
+        } else {
+            redis_client.set('thebaselab_isrunning', '1')
+            await thewuhanvirus_start()
+            redis_client.del('thebaselab_isrunning')
+        }
+    })
 }, { timezone: "Asia/Jakarta" })
 
 cron.schedule("*/7 * * * *", async () => {
-    if(fs.existsSync('thebaselab_isrunning.run')) return
     console.log("START for worldometers")
-    fs.writeFileSync('worldometers_isrunning.run', '1')
-    await worldometers_start()
-    fs.unlinkSync('worldometers_isrunning.run')
+    redis_client.exists("thebaselab_isrunning", async (err, reply) => {
+        if(reply === 1) {
+            console.log("Waitting thebaselab script")
+            return false
+        } else {
+            redis_client.set('worldometers_isrunning', '1')
+            await worldometers_start()
+            redis_client.del('worldometers_isrunning')
+        }
+    })
 }, { timezone: "Asia/Jakarta" })
 
 console.log("Service is running, press CTRL+C to stop.")
