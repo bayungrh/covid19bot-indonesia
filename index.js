@@ -132,7 +132,7 @@ Bersumber dari worldometers
     }
 }
 
-cron.schedule("*/14 * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
     if(fs.existsSync('worldometers_isrunning.run')) return
     console.log("START for thebaselab")
     fs.writeFileSync('thebaselab_isrunning.run', '1')
