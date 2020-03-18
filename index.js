@@ -120,11 +120,11 @@ Bersumber dari worldometers
 #COVID19 #COVID19Indonesia #coronavirus
 `
         nodeHtmlToImage({
-            output: './image.png',
+            output: './image_2.png',
             html: fs.readFileSync('./utils/template.html').toString(),
             content: {...{source: 'worldometers'}, ...update}
         }).then(() => {
-            tweet_with_image(text, fs.readFileSync('./image.png'))
+            tweet_with_image(text, fs.readFileSync('./image_2.png'))
         }).catch(() => {
             tweet(text)
         })
