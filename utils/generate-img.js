@@ -20,7 +20,7 @@ const generate = (query) => {
                 }
                 const data = Buffer.from(res.raw_body);
                 // fs.writeFileSync('myimg.png', data);
-                resolve(data.toString('base64'));
+                resolve(data);
             })
     })
 }
