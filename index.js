@@ -7,8 +7,10 @@ const {
 
 const crc32 = require('./utils/hash')
 const cron = require('node-cron')
-const covid19_update_thewuhanvirus = require('./wuhan')
-const covid19_update_worldometers = require('./worldometers')
+const covid19_update_thewuhanvirus = require('./datasrc/wuhan')
+const covid19_update_worldometers = require('./datasrc/worldometers')
+const covid19_update_kawalcovid19 = require('./datasrc/kawalcovid')
+
 const { tweet, tweet_with_image } = require('./utils/tweet')
 const generateImg = require('./utils/generate-img')
 
@@ -79,7 +81,7 @@ const thewuhanvirus_start = async() => {
 - Tingkat kesembuhan: ${t.recovery_rate}
 
 Bersumber dari thebaselab
-#COVID19 #COVID19Indonesia #coronavirus
+${process.env.HASTAG}
 `
                 let generate_img_query = {...{source: 'thebaselab', date: new Date().toLocaleDateString()}, ...t} 
                 generateImg(generate_img_query).then(buffer => {
@@ -115,7 +117,7 @@ const worldometers_start = async() => {
 - Meninggal: ${update.deaths} ${diff_death > 0 ? `(+${diff_death})` : ''}
 
 Bersumber dari worldometers
-#COVID19 #COVID19Indonesia #coronavirus
+${process.env.HASTAG}
 `
         let generate_img_query = {...{source: 'worldometers', date: new Date().toLocaleDateString()}, ...update}
         generateImg(generate_img_query).then(buffer => {
@@ -128,7 +130,41 @@ Bersumber dari worldometers
     }
 }
 
-cron.schedule("*/10 * * * *", () => {
+const kawalcovid19_start = async() => {
+    const update = await covid19_update_kawalcovid19()
+    if(update.length < 1) return
+    let json_str = JSON.stringify(update)
+    let checkExist = await redisGet('indonesia_affected:kawalcovid19')
+    var exist_parse, diff_total = 0, diff_death = 0, diff_recovered = 0;
+    if(checkExist !== json_str) {
+        if(checkExist) {
+            exist_parse = JSON.parse(checkExist)
+            diff_total = parseInt(update.infection) - parseInt(exist_parse.infection)
+            diff_death = parseInt(update.deaths) - parseInt(exist_parse.deaths)
+            diff_recovered = parseInt(update.recovered) - parseInt(exist_parse.recovered)
+        }
+        let text = `COVID-19 di ${update.country} saat ini.
+
+- Total: ${update.infection} ${diff_total > 0 ? `(+${diff_total})` : ''}
+- Perawatan: ${update.active_cases}
+- Sembuh: ${update.recovered} ${diff_recovered > 0 ? `(+${diff_recovered})` : ''}
+- Meninggal: ${update.deaths} ${diff_death > 0 ? `(+${diff_death})` : ''}
+
+Bersumber dari kawalcovid19
+${process.env.HASTAG}
+`
+        let generate_img_query = {...{source: 'kawalcovid19', date: new Date().toLocaleDateString()}, ...update}
+        generateImg(generate_img_query).then(buffer => {
+            tweet_with_image(text, buffer)
+        }).catch(err => {
+            console.error(err)
+            tweet(text)
+        })
+        redis_client.set('indonesia_affected:kawalcovid19', json_str)
+    }
+}
+
+cron.schedule("*/15 * * * *", () => {
     console.log("START for thebaselab")
     redis_client.exists("worldometers_isrunning", async (err, reply) => {
         if(reply === 1) {
@@ -142,7 +178,7 @@ cron.schedule("*/10 * * * *", () => {
     })
 }, { timezone: "Asia/Jakarta" })
 
-cron.schedule("*/7 * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
     console.log("START for worldometers")
     redis_client.exists("thebaselab_isrunning", async (err, reply) => {
         if(reply === 1) {
@@ -154,6 +190,11 @@ cron.schedule("*/7 * * * *", async () => {
             redis_client.del('worldometers_isrunning')
         }
     })
+}, { timezone: "Asia/Jakarta" })
+
+cron.schedule("*/4 * * * *", async () => {
+    console.log("START for kawalcovid19")
+    await kawalcovid19_start()
 }, { timezone: "Asia/Jakarta" })
 
 console.log("Service is running, press CTRL+C to stop.")

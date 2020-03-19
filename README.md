@@ -28,3 +28,4 @@ MIT
 Data source from: 
 - [https://thewuhanvirus.com/](https://thewuhanvirus.com/)
 - [https://www.worldometers.info/coronavirus/](https://www.worldometers.info/coronavirus/)
+- [https://kawalcovid19.id/](https://kawalcovid19.id/)
