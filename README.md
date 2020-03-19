@@ -29,3 +29,4 @@ Data source from:
 - [https://thewuhanvirus.com/](https://thewuhanvirus.com/)
 - [https://www.worldometers.info/coronavirus/](https://www.worldometers.info/coronavirus/)
 - [https://kawalcovid19.id/](https://kawalcovid19.id/)
+- [@mathdroid](https://github.com/mathdroid/indonesia-covid-19-api)
