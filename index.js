@@ -10,6 +10,7 @@ const cron = require('node-cron')
 const covid19_update_thewuhanvirus = require('./datasrc/wuhan')
 const covid19_update_worldometers = require('./datasrc/worldometers')
 const covid19_update_kawalcovid19 = require('./datasrc/kawalcovid')
+const covid19_update_summary_mathdroid = require('./datasrc/mathdroid')
 
 const { tweet, tweet_with_image } = require('./utils/tweet')
 const generateImg = require('./utils/generate-img')
@@ -164,6 +165,26 @@ ${process.env.HASTAG}
     }
 }
 
+const mathdroid_start = async () => {
+    const update = await covid19_update_summary_mathdroid()
+    if(update.length < 1) return
+    let json_str = JSON.stringify(update)
+    let checkExist = await redisGet('indonesia_case_summary:mathdroid')
+    if(checkExist === json_str) return
+    let text = ""
+    Object.keys(update).forEach(k => {
+        for (let i = 0; i < update[k].length; i++) {
+            text += update[k][i].label + `: ${update[k][i].value}` + (i !== update[k].length - 1 ? " | " : "")
+        }
+        text += "\n\n"
+    })
+    tweet(text.trim()).then(data => {
+        tweet(`Bersumber dari mathdroid API \n\nData diperbarui pada ${new Date().toLocaleString()}`, data.id_str).then(() => {
+            redis_client.set('indonesia_case_summary:mathdroid', json_str)
+        })
+    })
+}
+
 cron.schedule("*/15 * * * *", () => {
     console.log("START for thebaselab")
     redis_client.exists("worldometers_isrunning", async (err, reply) => {
@@ -193,8 +214,9 @@ cron.schedule("*/10 * * * *", async () => {
 }, { timezone: "Asia/Jakarta" })
 
 cron.schedule("*/4 * * * *", async () => {
-    console.log("START for kawalcovid19")
+    console.log("START for kawalcovid19 & mathdroid")
     await kawalcovid19_start()
+    await mathdroid_start()
 }, { timezone: "Asia/Jakarta" })
 
 console.log("Service is running, press CTRL+C to stop.")
