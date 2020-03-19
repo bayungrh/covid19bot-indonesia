@@ -9,8 +9,7 @@ const kawalcovid19 = async () => {
                 infection: body.confirmed.value,
                 recovered: body.recovered.value,
                 deaths: body.deaths.value,
-                active_cases: body.activeCare.value,
-                lastUpdatedAt: body.metadata.lastUpdatedAt
+                active_cases: body.activeCare.value
             }
         } return {}
     }).catch(err => {})
