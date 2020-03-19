@@ -12,10 +12,10 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "node-cron": "^2.0.3",
-    "node-html-to-image": "^1.1.0",
     "puppeteer": "^2.1.1",
     "redis": "^3.0.2",
-    "twit": "^2.2.11"
+    "twit": "^2.2.11",
+    "unirest": "^0.6.0"
   },
   "engines": {
     "node": "10.x"
