@@ -10,8 +10,7 @@ const cron = require('node-cron')
 const covid19_update_thewuhanvirus = require('./wuhan')
 const covid19_update_worldometers = require('./worldometers')
 const { tweet, tweet_with_image } = require('./utils/tweet')
-const nodeHtmlToImage = require('node-html-to-image')
-const fs = require('fs')
+const generateImg = require('./utils/generate-img')
 
 function chunkText(text) {
     var array = text.split(' ')
@@ -82,12 +81,9 @@ const thewuhanvirus_start = async() => {
 Bersumber dari thebaselab
 #COVID19 #COVID19Indonesia #coronavirus
 `
-                nodeHtmlToImage({
-                    output: './image.png',
-                    html: fs.readFileSync('./utils/template.html').toString(),
-                    content: {...{source: 'thebaselab', date: new Date().toLocaleDateString()}, ...t}
-                }).then(() => {
-                    tweet_with_image(text, fs.readFileSync('./image.png'))
+                let generate_img_query = {...{source: 'thebaselab', date: new Date().toLocaleDateString()}, ...t} 
+                generateImg(generate_img_query).then(buffer => {
+                    tweet_with_image(text, buffer)
                 }).catch(err => {
                     console.error(err)
                     tweet(text)
@@ -121,12 +117,9 @@ const worldometers_start = async() => {
 Bersumber dari worldometers
 #COVID19 #COVID19Indonesia #coronavirus
 `
-        nodeHtmlToImage({
-            output: './image_2.png',
-            html: fs.readFileSync('./utils/template.html').toString(),
-            content: {...{source: 'worldometers', date: new Date().toLocaleDateString()}, ...update}
-        }).then(() => {
-            tweet_with_image(text, fs.readFileSync('./image_2.png'))
+        let generate_img_query = {...{source: 'worldometers', date: new Date().toLocaleDateString()}, ...update}
+        generateImg(generate_img_query).then(buffer => {
+            tweet_with_image(text, buffer)
         }).catch(err => {
             console.error(err)
             tweet(text)
