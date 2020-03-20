@@ -11,10 +11,10 @@ const groupBy = (array, key, status) => {
 }
 
 const case_sumary = () => {
-    return unirest.get('https://indonesia-covid-19.mathdro.id/api/kasus').type('json').then(data => {
-        let group_provinsi = groupBy(data.body, 'provinsi')
-        let group_wn = groupBy(data.body, 'wn')
-        let group_jk = groupBy(data.body, 'jk')
+    return unirest.get('https://indonesia-covid-19.mathdro.id/api/kasus').type('json').then(data => data.body.data).then(data => {
+        let group_provinsi = groupBy(data, 'provinsi')
+        let group_wn = groupBy(data, 'wn')
+        let group_jk = groupBy(data, 'jk')
         let daerah = [], warga_negara = [], jenis_kelamin = []
         Object.keys(group_provinsi).forEach((e, i) => {
             daerah.push({
