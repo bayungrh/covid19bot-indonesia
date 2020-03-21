@@ -181,14 +181,14 @@ const mathdroid_start = async () => {
     text = text.trim()
     if(text.length > 278) {
         var chunk = chunkText(text)
-        var latest_id = ""
+        var latest_id = null
         for (let i = 0; i < chunk.length; i++) {
             const element = chunk[i];
-            var text = element.join(' ')
+            var txt = element.join(' ')
             if(i != chunk.length - 1) {
-                text += ` ~(${i+1}/${chunk.length})`
+                txt += ` ~(${i+1}/${chunk.length})`
             }
-            var child_tweet = await tweet(text, latest_id)
+            var child_tweet = await tweet(txt, latest_id)
             latest_id = child_tweet.id_str
             if(i === chunk.length - 1) {
                 tweet(`Updated: ${c.updated_at}`, latest_id)
