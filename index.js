@@ -178,11 +178,26 @@ const mathdroid_start = async () => {
         }
         text += "\n\n"
     })
-    tweet(text.trim()).then(data => {
-        tweet(`Bersumber dari mathdroid API \n\nData diperbarui pada ${new Date().toLocaleString()}`, data.id_str).then(() => {
-            redis_client.set('indonesia_case_summary:mathdroid', json_str)
-        })
-    })
+    text = text.trim()
+    if(text.length > 278) {
+        var chunk = chunkText(text)
+        var latest_id = null
+        for (let i = 0; i < chunk.length; i++) {
+            const element = chunk[i];
+            var txt = element.join(' ')
+            if(i != chunk.length - 1) {
+                txt += ` ~(${i+1}/${chunk.length})`
+            }
+            var child_tweet = await tweet(txt, latest_id)
+            latest_id = child_tweet.id_str
+            if(i === chunk.length - 1) {
+                tweet(`Updated: ${c.updated_at}`, latest_id)
+            }
+        }
+     } else if (text.length > 0) {
+         var child_tweet = await tweet(text)
+         tweet(`Updated: ${c.updated_at}`, child_tweet.id_str)
+     }
 }
 
 cron.schedule("*/15 * * * *", () => {
