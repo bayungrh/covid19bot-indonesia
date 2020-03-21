@@ -181,7 +181,8 @@ const mathdroid_start = async () => {
     text = text.trim()
     if(text.length > 278) {
         var chunk = chunkText(text)
-        var latest_id = null
+        var start_tweet = await tweet("Jumlah per-kasus di Indonesia saat ini.")
+        var latest_id = start_tweet.id_str
         for (let i = 0; i < chunk.length; i++) {
             const element = chunk[i];
             var txt = element.join(' ')
@@ -195,9 +196,10 @@ const mathdroid_start = async () => {
             }
         }
      } else if (text.length > 0) {
-         var child_tweet = await tweet(text)
+         var child_tweet = await tweet(text, start_tweet.id_str)
          tweet(`Updated: ${c.updated_at}`, child_tweet.id_str)
      }
+     redis_client.set('indonesia_case_summary:mathdroid', json_str)
 }
 
 cron.schedule("*/15 * * * *", () => {
