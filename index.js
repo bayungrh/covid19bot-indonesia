@@ -192,12 +192,12 @@ const mathdroid_start = async () => {
             var child_tweet = await tweet(txt, latest_id)
             latest_id = child_tweet.id_str
             if(i === chunk.length - 1) {
-                tweet(`Updated: ${c.updated_at}`, latest_id)
+                tweet(`Diperbarui pada ${new Date().toLocaleDateString()}`, latest_id)
             }
         }
      } else if (text.length > 0) {
          var child_tweet = await tweet(text, start_tweet.id_str)
-         tweet(`Updated: ${c.updated_at}`, child_tweet.id_str)
+         tweet(`Diperbarui pada ${new Date().toLocaleDateString()}`, child_tweet.id_str)
      }
      redis_client.set('indonesia_case_summary:mathdroid', json_str)
 }
