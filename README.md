@@ -1,7 +1,14 @@
 # covid19bot-indonesia
-[Twitter](https://twitter.com/covid19botindo)
+![Twitter Follow](https://img.shields.io/twitter/follow/covid19botindo?style=social)
 
-A simple BOT App to get the latest information about the corona virus that is spreading in Indonesia.
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/muhbayu/covid19bot-indonesia)
+![GitHub last commit](https://img.shields.io/github/last-commit/muhbayu/covid19bot-indonesia)
+![GitHub stars](https://img.shields.io/github/stars/muhbayu/covid19bot-indonesia)
+![GitHub forks](https://img.shields.io/github/forks/muhbayu/covid19bot-indonesia)
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/muhbayu/covid19bot-indonesia/puppeteer)
+
+A Twitter Bot to provide the latest information about the spread of the Covid-19 virus in Indonesia.
+This application running on Heroku [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## Prerequisites
 - Twitter developer App and its corresponding consumer key/secret and access token key/secret
@@ -18,14 +25,10 @@ Run application:
 node index.js
 ```
 
-## Author
-[MuhBayu](https://github.com/MuhBayu "MuhBayu")
-
 ## LICENSE
-MIT
+![GitHub](https://img.shields.io/github/license/muhbayu/covid19bot-indonesia)
 
-
-Data source from: 
+## Data source: 
 - [https://thewuhanvirus.com/](https://thewuhanvirus.com/)
 - [https://www.worldometers.info/coronavirus/](https://www.worldometers.info/coronavirus/)
 - [https://kawalcovid19.id/](https://kawalcovid19.id/)
