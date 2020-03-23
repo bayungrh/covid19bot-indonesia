@@ -8,7 +8,9 @@
 ![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/muhbayu/covid19bot-indonesia/puppeteer)
 
 A Twitter Bot to provide the latest information about the spread of the Covid-19 virus in Indonesia.
-This application running on Heroku [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+This application running on Heroku<br/>
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## Prerequisites
 - Twitter developer App and its corresponding consumer key/secret and access token key/secret

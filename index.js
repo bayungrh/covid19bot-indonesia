@@ -202,38 +202,42 @@ const mathdroid_start = async () => {
      redis_client.set('indonesia_case_summary:mathdroid', json_str)
 }
 
-cron.schedule("*/15 * * * *", () => {
-    console.log("START for thebaselab")
-    redis_client.exists("worldometers_isrunning", async (err, reply) => {
-        if(reply === 1) {
-            console.log("Waitting worldometers script")
-            return false
-        } else {
-            redis_client.set('thebaselab_isrunning', '1')
-            await thewuhanvirus_start()
-            redis_client.del('thebaselab_isrunning')
-        }
-    })
-}, { timezone: "Asia/Jakarta" })
+(() => {
+    console.log("Service is running, press CTRL+C to stop.")
+    redis_client.del('worldometers_isrunning')
+    redis_client.del('thebaselab_isrunning')
+    
+    cron.schedule("*/15 * * * *", () => {
+        console.log("START for thebaselab")
+        redis_client.exists("worldometers_isrunning", async (err, reply) => {
+            if(reply === 1) {
+                console.log("Waitting worldometers script")
+                return false
+            } else {
+                redis_client.set('thebaselab_isrunning', '1')
+                await thewuhanvirus_start()
+                redis_client.del('thebaselab_isrunning')
+            }
+        })
+    }, { timezone: "Asia/Jakarta" })
 
-cron.schedule("*/10 * * * *", async () => {
-    console.log("START for worldometers")
-    redis_client.exists("thebaselab_isrunning", async (err, reply) => {
-        if(reply === 1) {
-            console.log("Waitting thebaselab script")
-            return false
-        } else {
-            redis_client.set('worldometers_isrunning', '1')
-            await worldometers_start()
-            redis_client.del('worldometers_isrunning')
-        }
-    })
-}, { timezone: "Asia/Jakarta" })
+    cron.schedule("*/10 * * * *", async () => {
+        console.log("START for worldometers")
+        redis_client.exists("thebaselab_isrunning", async (err, reply) => {
+            if(reply === 1) {
+                console.log("Waitting thebaselab script")
+                return false
+            } else {
+                redis_client.set('worldometers_isrunning', '1')
+                await worldometers_start()
+                redis_client.del('worldometers_isrunning')
+            }
+        })
+    }, { timezone: "Asia/Jakarta" })
 
-cron.schedule("*/4 * * * *", async () => {
-    console.log("START for kawalcovid19 & mathdroid")
-    await kawalcovid19_start()
-    await mathdroid_start()
-}, { timezone: "Asia/Jakarta" })
-
-console.log("Service is running, press CTRL+C to stop.")
+    cron.schedule("*/4 * * * *", async () => {
+        console.log("START for kawalcovid19 & mathdroid")
+        await kawalcovid19_start()
+        await mathdroid_start()
+    }, { timezone: "Asia/Jakarta" })
+})()
