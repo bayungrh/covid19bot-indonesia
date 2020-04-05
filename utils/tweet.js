@@ -11,7 +11,11 @@ const tweet = (text, reply_status_id=null) => {
         var dataTwit = reply_status_id ? {status: text, in_reply_to_status_id: reply_status_id} : {status: text}
         T.post('statuses/update', dataTwit, function(err, data, response) {
             if(!err) {
-                console.log("Tweet SENT")
+                console.log("---------------")
+                console.log("Tweet Sent: " + reply_status_id ? reply_status_id : data.id_str)
+                console.log("Type: " + reply_status_id ? "Parent" : "Child")
+                if(reply_status_id) console.log("Parent Tweet ID: " + data.id_str)
+                console.log("---------------")
                 resolve(data)
             } else {
                 reject(err)
