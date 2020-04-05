@@ -10,10 +10,12 @@ const cron = require('node-cron')
 const covid19_update_thewuhanvirus = require('./datasrc/wuhan')
 const covid19_update_worldometers = require('./datasrc/worldometers')
 const covid19_update_kawalcovid19 = require('./datasrc/kawalcovid')
-const covid19_update_summary_mathdroid = require('./datasrc/mathdroid')
+const covid19_update_mathdroid = require('./datasrc/mathdroid')
 
 const { tweet, tweet_with_image } = require('./utils/tweet')
 const generateImg = require('./utils/generate-img')
+var chunkTxt = require('chunk-text');
+
 
 function chunkText(text) {
     var array = text.split(' ')
@@ -166,40 +168,36 @@ ${process.env.HASTAG}
 }
 
 const mathdroid_start = async () => {
-    const update = await covid19_update_summary_mathdroid()
+    const update = await covid19_update_mathdroid()
     if(update.length < 1) return
     let json_str = JSON.stringify(update)
-    let checkExist = await redisGet('indonesia_case_summary:mathdroid')
+    let checkExist = await redisGet('indonesia_cases_perprovince:mathdroid')
     if(checkExist === json_str) return
     let text = ""
-    Object.keys(update).forEach(k => {
-        for (let i = 0; i < update[k].length; i++) {
-            text += update[k][i].label + `: ${update[k][i].value}` + (i !== update[k].length - 1 ? " | " : "")
-        }
-        text += "\n\n"
-    })
+
+    update.forEach((element, index) => {
+        text += `- [${element.provinsi}]` + ` | Positif: ${element.kasusPosi} | Sembuh: ${element.kasusSemb} | Meninggal: ${element.kasusMeni}`
+        text += "\n"        
+    });
+
     text = text.trim()
     if(text.length > 278) {
-        var chunk = chunkText(text)
-        var start_tweet = await tweet("Jumlah per-kasus di Indonesia saat ini.")
+        var chunk = chunkTxt(text, 278)
+        var start_tweet = await tweet(`Jumlah kasus per-provinsi di Indonesia saat ini. (${new Date().toLocaleString})`)
         var latest_id = start_tweet.id_str
         for (let i = 0; i < chunk.length; i++) {
-            const element = chunk[i];
-            var txt = element.join(' ')
-            if(i != chunk.length - 1) {
-                txt += ` ~(${i+1}/${chunk.length})`
-            }
+            const txt = chunk[i];
             var child_tweet = await tweet(txt, latest_id)
             latest_id = child_tweet.id_str
-            if(i === chunk.length - 1) {
-                tweet(`Diperbarui pada ${new Date().toLocaleString()}`, latest_id)
-            }
+            // if(i === chunk.length - 1) {
+            //     tweet(`Diperbarui pada ${new Date().toLocaleString()}`, latest_id)
+            // }
         }
      } else if (text.length > 0) {
-         var child_tweet = await tweet(text, start_tweet.id_str)
-         tweet(`Diperbarui pada ${new Date().toLocaleString()}`, child_tweet.id_str)
+         var child_tweet = tweet(text, start_tweet.id_str)
+        //  tweet(`Diperbarui pada ${new Date().toLocaleString()}`, child_tweet.id_str)
      }
-     redis_client.set('indonesia_case_summary:mathdroid', json_str)
+     redis_client.set('indonesia_cases_perprovince:mathdroid', json_str)
 }
 
 (() => {
