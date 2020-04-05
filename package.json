@@ -10,6 +10,7 @@
   "author": "MuhBayu",
   "license": "MIT",
   "dependencies": {
+    "chunk-text": "^1.0.5",
     "dotenv": "^8.2.0",
     "node-cron": "^2.0.3",
     "puppeteer": "^2.1.1",
