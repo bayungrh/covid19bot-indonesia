@@ -25,6 +25,13 @@ function chunkText(text) {
     }
     return temparray
 }
+function chunkArr(array, chunkSize) {
+    return [].concat.apply([],
+      array.map(function(elem, i) {
+        return i % chunkSize ? [] : [array.slice(i, i + chunkSize)];
+      })
+    );
+}
 
 const thewuhanvirus_start = async() => {
     var corona = await covid19_update_thewuhanvirus()
@@ -39,7 +46,7 @@ const thewuhanvirus_start = async() => {
                 var start_tweet = await tweet(c.title)
                 var latest_id = start_tweet.id_str
                 if(content.length > 278) {
-                    var chunk = chunkText(content)
+                    var chunk = chunkTxt(content, 278)
                     for (let i = 0; i < chunk.length; i++) {
                         const element = chunk[i];
                         var text = element.join(' ')
@@ -173,31 +180,23 @@ const mathdroid_start = async () => {
     let json_str = JSON.stringify(update)
     let checkExist = await redisGet('indonesia_cases_perprovince:mathdroid')
     if(checkExist === json_str) return
+
     let text = ""
-
-    update.forEach((element, index) => {
-        text += `- [${element.provinsi}]` + ` | Positif: ${element.kasusPosi} | Sembuh: ${element.kasusSemb} | Meninggal: ${element.kasusMeni}`
-        text += "\n"        
-    });
-
-    text = text.trim()
-    if(text.length > 278) {
-        var chunk = chunkTxt(text, 278)
-        var start_tweet = await tweet(`Jumlah kasus per-provinsi di Indonesia saat ini. (${new Date().toLocaleString})`)
-        var latest_id = start_tweet.id_str
-        for (let i = 0; i < chunk.length; i++) {
-            const txt = chunk[i];
-            var child_tweet = await tweet(txt, latest_id)
-            latest_id = child_tweet.id_str
-            // if(i === chunk.length - 1) {
-            //     tweet(`Diperbarui pada ${new Date().toLocaleString()}`, latest_id)
-            // }
-        }
-     } else if (text.length > 0) {
-         var child_tweet = tweet(text, start_tweet.id_str)
-        //  tweet(`Diperbarui pada ${new Date().toLocaleString()}`, child_tweet.id_str)
-     }
-     redis_client.set('indonesia_cases_perprovince:mathdroid', json_str)
+    let arr_text = []
+    update.forEach(element => {
+        text = `- (${element.provinsi})` + ` positif: ${element.kasusPosi} | sembuh: ${element.kasusSemb} | meninggal: ${element.kasusMeni}`
+        arr_text.push(text)
+    })
+    
+    let chunkarray = chunkArr(arr_text, 3)
+    const start_tweet = await tweet(`Jumlah kasus per-provinsi di Indonesia saat ini. (${new Date().toLocaleString()})`)
+    let latest_id = start_tweet.id_str
+    for (let i = 0; i < chunkarray.length; i++) {
+        const txt = chunkarray[i];
+        const child_tweet = await tweet(txt.join('\n'), latest_id)
+        latest_id = child_tweet.id_str
+    }
+    redis_client.set('indonesia_cases_perprovince:mathdroid', json_str)
 }
 
 (() => {
