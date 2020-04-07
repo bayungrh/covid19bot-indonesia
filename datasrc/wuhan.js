@@ -26,11 +26,11 @@ const covid19_update = async () => {
             affecteds.push({
                 country: td.querySelector('th').textContent,
                 infection: td.querySelector('td:nth-child(2) > h4').textContent,
-                active_cases: td.querySelector('td:nth-child(3) > h4').textContent,
-                deaths: td.querySelector('td:nth-child(4) > h4').textContent,
-                recovered: td.querySelector('td:nth-child(5) > h4').textContent,
-                mortality_rate: td.querySelector('td:nth-child(6) > h4').textContent,
-                recovery_rate: td.querySelector('td:nth-child(7) > h4').textContent,
+                active_cases: td.querySelector('td:nth-child(4) > h4').textContent,
+                deaths: td.querySelector('td:nth-child(5) > h4').textContent,
+                recovered: td.querySelector('td:nth-child(7) > h4').textContent,
+                mortality_rate: td.querySelector('td:nth-child(8) > h4').textContent,
+                recovery_rate: td.querySelector('td:nth-child(9) > h4').textContent,
             })
         })
         return {
