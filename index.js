@@ -189,7 +189,7 @@ const mathdroid_start = async () => {
     })
     
     let chunkarray = chunkArr(arr_text, 3)
-    const start_tweet = await tweet(`Jumlah kasus per-provinsi di Indonesia saat ini. (${new Date().toLocaleString()})`)
+    const start_tweet = await tweet(`Jumlah kasus berdasarkan daerah saat ini. (${new Date().toLocaleString()})`)
     let latest_id = start_tweet.id_str
     for (let i = 0; i < chunkarray.length; i++) {
         const txt = chunkarray[i];
